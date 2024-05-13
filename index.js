@@ -26,6 +26,35 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
+    const resturantCollection = client.db("resturant").collection("foods");
+
+
+
+
+
+
+    app.get("/foods", async (req, res) => {
+        const cursor = resturantCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      });
+
+      app.get("/foods/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await resturantCollection.findOne(query);
+        res.send(result);
+      });
+
+
+
+
+    app.post("/foods", async (req, res) => {
+        const newFood = req.body;
+        // console.log(newFood);
+        const result = await resturantCollection.insertOne(newFood);
+        res.send(result);
+      });
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
