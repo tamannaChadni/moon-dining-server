@@ -24,6 +24,37 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const resturantCollection = client.db("resturant").collection("foods");
+    const purchaseCollection = client.db("resturant").collection("purchase");
+
+    // purchase food
+
+    app.post("/purchase", async (req, res) => {
+      const purchaseFood = req.body;
+      // console.log(newFood);
+      const result = await purchaseCollection.insertOne(purchaseFood);
+      res.send(result);
+    });
+
+
+    app.get("/purchase", async (req, res) => {
+      const cursor = purchaseCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+
+    app.delete("/purchase/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await purchaseCollection.deleteOne(query);
+      res.send(result);
+    });
+
+
+
+
+
+    // resturant api
 
     app.get("/foods", async (req, res) => {
       const cursor = resturantCollection.find();
@@ -79,6 +110,16 @@ async function run() {
       );
       res.send(result);
     });
+
+
+   
+
+    // resturant api
+
+
+
+
+    
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
