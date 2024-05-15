@@ -25,6 +25,28 @@ async function run() {
     // await client.connect();
     const resturantCollection = client.db("resturant").collection("foods");
     const purchaseCollection = client.db("resturant").collection("purchase");
+    const galleryCollection = client.db("resturant").collection("gallery");
+
+// gallery api
+
+app.post("/gallery", async (req, res) => {
+  const galleryFood = req.body;
+  // console.log(newFood);
+  const result = await galleryCollection.insertOne(galleryFood);
+  res.send(result);
+});
+
+app.get("/gallery", async (req, res) => {
+  const cursor = galleryCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+});
+
+
+
+
+
+
 
     // purchase food
 
@@ -35,13 +57,11 @@ async function run() {
       res.send(result);
     });
 
-
     app.get("/purchase", async (req, res) => {
       const cursor = purchaseCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
-
 
     app.delete("/purchase/:id", async (req, res) => {
       const id = req.params.id;
@@ -49,10 +69,6 @@ async function run() {
       const result = await purchaseCollection.deleteOne(query);
       res.send(result);
     });
-
-
-
-
 
     // resturant api
 
@@ -111,15 +127,7 @@ async function run() {
       res.send(result);
     });
 
-
-   
-
     // resturant api
-
-
-
-
-    
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
