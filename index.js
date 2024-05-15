@@ -27,26 +27,20 @@ async function run() {
     const purchaseCollection = client.db("resturant").collection("purchase");
     const galleryCollection = client.db("resturant").collection("gallery");
 
-// gallery api
+    // gallery api
 
-app.post("/gallery", async (req, res) => {
-  const galleryFood = req.body;
-  // console.log(newFood);
-  const result = await galleryCollection.insertOne(galleryFood);
-  res.send(result);
-});
+    app.post("/gallery", async (req, res) => {
+      const galleryFood = req.body;
+      // console.log(newFood);
+      const result = await galleryCollection.insertOne(galleryFood);
+      res.send(result);
+    });
 
-app.get("/gallery", async (req, res) => {
-  const cursor = galleryCollection.find();
-  const result = await cursor.toArray();
-  res.send(result);
-});
-
-
-
-
-
-
+    app.get("/gallery", async (req, res) => {
+      const cursor = galleryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     // purchase food
 
@@ -71,6 +65,21 @@ app.get("/gallery", async (req, res) => {
     });
 
     // resturant api
+
+    app.get("/foods/search", async (req, res) => {
+      const search = req.query.search;
+      let query = {
+        name: { $regex: search, $options: "i" },
+      };
+      const result = await resturantCollection
+        .find(query)
+        .toArray();
+      res.send(result);
+    });
+
+
+
+
 
     app.get("/foods", async (req, res) => {
       const cursor = resturantCollection.find();
