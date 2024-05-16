@@ -1,13 +1,18 @@
 const express = require("express");
 const cors = require("cors");
+const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
+const cookieParser = require ('cookie-parser');
 
-app.use(cors({
-  origin:["http://localhost:5173","https://moon-dining.web.app/"]
-}));
+const corsOptions ={
+  origin:["http://localhost:5173","https://moon-dining.web.app/"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+}
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.avbafwc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -28,6 +33,32 @@ async function run() {
     const resturantCollection = client.db("resturant").collection("foods");
     const purchaseCollection = client.db("resturant").collection("purchase");
     const galleryCollection = client.db("resturant").collection("gallery");
+
+    // jwt generate
+
+    app.post('/jwt', async(req,res)=>{
+      const user = req.body
+      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, {expiresIn:'365d'})
+      // res.send({token})
+      res.cookie('token',token,{
+        httpOnly:true,
+        secure: process.env.NODE_ENV==='production',
+        sameSite:process.env.NODE_ENV ==="production" ?'none':'strict',
+      }).send({success:true})
+    })
+
+   
+
+
+
+
+
+
+
+
+
+
+
 
     // gallery api
 
