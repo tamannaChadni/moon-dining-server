@@ -129,11 +129,14 @@ async function run() {
 
     app.get("/foods", async (req, res) => {
       // console.log(req.query);
+      const searchQuery = req.query.search || "";
 
-      const cursor = resturantCollection.find();
+     
       const page = parseInt(req.query.page);
       const size= parseInt(req.query.size);
       // console.log( 'heelo',page,size);
+      const filter = searchQuery ? { name: { $regex: searchQuery, $options: "i" } } : {};
+      const cursor = resturantCollection.find(filter);
       const result = await cursor
       .skip(page* size)
       .limit(size)
