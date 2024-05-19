@@ -8,7 +8,7 @@ const port = process.env.PORT || 5000;
 const cookieParser = require ('cookie-parser');
 
 const corsOptions ={
-  origin:["http://localhost:5173","https://moon-dining.web.app/"],
+  // origin:["http://localhost:5173","https://moon-dining.web.app/"],
   credentials: true,
   optionsSuccessStatus: 200,
 }
@@ -61,17 +61,6 @@ async function run() {
     })
 
    
-
-
-
-
-
-
-
-
-
-
-
 
     // gallery api
 
@@ -127,9 +116,28 @@ async function run() {
 
 
 
+    app.get("/foodCount", async (req, res) => {
+      // const cursor = resturantCollection.find();
+      // const result = await cursor.toArray();
+
+      const count = await resturantCollection.countDocuments();
+      
+      res.send({count});
+    });
+
+
+
     app.get("/foods", async (req, res) => {
+      // console.log(req.query);
+
       const cursor = resturantCollection.find();
-      const result = await cursor.toArray();
+      const page = parseInt(req.query.page);
+      const size= parseInt(req.query.size);
+      // console.log( 'heelo',page,size);
+      const result = await cursor
+      .skip(page* size)
+      .limit(size)
+      .toArray();
       res.send(result);
     });
 
@@ -144,6 +152,14 @@ async function run() {
       const newFood = req.body;
       // console.log(newFood);
       const result = await resturantCollection.insertOne(newFood);
+      // const id = req.params.id;
+      // update food-count
+      // const updateDoc = {
+      //   $set :{$onc:{food_count:1}},
+      // }
+      // const query = {_id: new ObjectId(id)}
+
+      // const updateFoodCount = resturantCollection.updateOne(query,updateDoc)
       res.send(result);
     });
 
